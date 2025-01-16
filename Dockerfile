@@ -9,14 +9,17 @@ COPY package*.json ./
 # COPY prisma ./prisma/
 COPY src/infra/database/prisma/schema.prisma ./prisma/
 
-# Instale apenas as dependências de produção
-RUN npm ci --omit=dev
+# Instale todas as dependências (incluindo as de desenvolvimento)
+RUN npm ci
+
+# Gere o cliente Prisma
+RUN npx prisma generate
 
 # Copie o restante dos arquivos do projeto
 COPY . .
 
 # Compile o projeto NestJS
-RUN npm run build
+RUN npx nest build
 
 # Etapa final: criar a imagem para produção
 FROM node:18-alpine AS production
